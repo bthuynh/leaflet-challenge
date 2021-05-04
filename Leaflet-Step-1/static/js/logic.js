@@ -1,21 +1,23 @@
-
+// CREATE MAP
 var myMap = L.map("map", {
   center: [28.304381, -196.526448],
   zoom: 2.5
 });
 
+// ADD TILE LAYER
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap);
 
+//GEOJSON LINK
 var baseURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson?";
 
-
+// RADIUS FUNCTION
 function calculateRadius (magnitude) {
   return magnitude * 3
 }
 
-
+// DEPTH FUNCTION
 function colorMarker (depth) {
   if (depth > 90 ) {
     return "#ea2c2c"
@@ -37,7 +39,7 @@ function colorMarker (depth) {
   }
 }
 
-
+//PLOT DATA ON MAP
 d3.json(baseURL).then(function (data) {
   L.geoJSON(data, {
     pointToLayer: function (feature, latLng) {
@@ -45,11 +47,11 @@ d3.json(baseURL).then(function (data) {
       
     },
 
-
+// BIND POPUPS
     onEachFeature: function (feature, layer) {
       layer.bindPopup("<h3>Location: " + feature.properties.place + "</h3><hr><p>Magnitude: " + feature.properties.mag +  "</p><p>Depth: " + feature.geometry.coordinates[2] );
     },
-
+// MARKERS
     style: function (feature, layer) {
       return {
         radius: calculateRadius(feature.properties.mag),
@@ -58,12 +60,12 @@ d3.json(baseURL).then(function (data) {
         color: colorMarker(feature.geometry.coordinates[2])
       }
     }
-
+// ADD TO MAP
   }).addTo(myMap);
 
 })
 
-
+// LEGEND
 var legend = L.control({
   position: "bottomright"
 });
@@ -86,5 +88,5 @@ legend.onAdd = function() {
   }
   return div;
 };
-
+// ADD LEGEND TO MAP
 legend.addTo(myMap);
